@@ -10,6 +10,11 @@ class HttpWebServiceInvoker
         return strtolower(substr($name, strlen($verb), strlen($name)));
     }
 
+    private static function generateQs($arguments)
+    {
+        return ((count($arguments) > 0 ?  '?' : "") . http_build_query($arguments));
+    }
+
     public function invoke($methodName, $arguments, $baseUrl)
     {
         if (strpos($methodName, "get") === 0) {
@@ -40,8 +45,9 @@ class HttpWebServiceInvoker
         switch ($verb) {
             case "get":
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . (count($arguments) > 0 ? "?id=" . urlencode($arguments[0]) : ""));
+                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . self::generateQs($arguments));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -53,11 +59,19 @@ class HttpWebServiceInvoker
                     throw new Error($error);
                 }
             case "create":
+                $values = array();
+                foreach ($arguments as $object) {
+                    foreach ($object as $name => $value) {
+                        $values[$name] = $value;
+                    }
+                }
+
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, (array)$arguments[0]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -69,11 +83,19 @@ class HttpWebServiceInvoker
                     throw new Error($error);
                 }
             case "createOrReplace":
+                $values = array();
+                foreach ($arguments as $object) {
+                    foreach ($object as $name => $value) {
+                        $values[$name] = $value;
+                    }
+                }
+
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . "?id=" . urlencode($arguments[0]->id));
+                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, (array)$arguments[0]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -85,11 +107,19 @@ class HttpWebServiceInvoker
                     throw new Error($error);
                 }
             case "update":
+                $values = array();
+                foreach ($arguments as $object) {
+                    foreach ($object as $name => $value) {
+                        $values[$name] = $value;
+                    }
+                }
+
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . "?id=" . urlencode($arguments[0]->id));
+                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, (array)$arguments[0]);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -102,9 +132,10 @@ class HttpWebServiceInvoker
                 }
             case "delete":
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . "?id=" . urlencode($arguments[0]));
+                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . self::generateQs($arguments));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -119,13 +150,11 @@ class HttpWebServiceInvoker
                 // POST to a custom verb resource
 
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . '/' . $verb
-                    . (count($arguments) > 0 && !(is_array($arguments[0]) || is_object($arguments[0]))
-                        ? "?id=" . urlencode($arguments[0]) : ""));
-                // TODO we assume id is passed but need to detect that more proper, custom verbs might pass different things
+                curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . '/' . $verb);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, (count($arguments) > 0 && (is_array($arguments[0]) || is_object($arguments[0])) ? (array)$arguments[0] : array()));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $arguments);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("accept: application/json"));
 
                 $result = curl_exec($ch);
 
@@ -136,7 +165,6 @@ class HttpWebServiceInvoker
 
                     throw new Error($error);
                 }
-                return;
         }
     }
 }
