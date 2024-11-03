@@ -3,7 +3,7 @@ require_once "weburg/ghowst/GenericHttpWebServiceClient.php";
 
 use weburg\ghowst\GenericHttpWebServiceClient;
 
-$httpWebService = new GenericHttpWebServiceClient("http://whale:8081/generichttpws");
+$httpWebService = new GenericHttpWebServiceClient("http://localhost:8081/generichttpws");
 
 /*** Photo ***/
 
