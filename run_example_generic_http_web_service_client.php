@@ -1,7 +1,9 @@
 <?php
 require_once "weburg/ghowst/GenericHttpWebServiceClient.php";
+require_once "weburg/ghowst/HttpWebServiceException.php";
 
 use weburg\ghowst\GenericHttpWebServiceClient;
+use weburg\ghowst\HttpWebServiceException;
 
 $httpWebService = new GenericHttpWebServiceClient("http://localhost:8081/generichttpws");
 
@@ -78,4 +80,33 @@ $httpWebService->deleteEngines(id: $engineId4);
 
 // Custom verb
 $httpWebService->restartEngines(id: $engineId2);
+
+// Repeat, complex objects with different names
+$truck1 = new stdClass();
+$truck1->name = "Ram";
+$truck1->engineId = $engineId1;
+$truck2 = new stdClass();
+$truck2->name = "Ford";
+$truck2->engineId = $engineId2;
+$truckNameCompareResult = $httpWebService->raceTrucks(truck1: $truck1, truck2: $truck2);
+
+if ($truckNameCompareResult == 0) {
+    throw new RuntimeException("Did not expect both trucks to have the same name.");
+}
+
+// Induce a not found error and catch it
+try {
+    $engine = $httpWebService->getEngines(id: -2);
+    echo "Engine returned: " . $engine->name . "\n";
+} catch (HttpWebServiceException $e) {
+    echo "Status: " . $e->getHttpStatus() . " Message: " . $e->getMessage() . "\n";
+}
+
+// Induce a service error and catch it
+try {
+    $httpWebServiceWrong = new GenericHttpWebServiceClient("http://nohost:8081/generichttpws");
+    $httpWebServiceWrong->getEngines(id: -2);
+} catch (HttpWebServiceException $e) {
+    echo "Status: " . $e->getHttpStatus() . " Message: " . $e->getMessage() . "\n";
+}
 ?>
