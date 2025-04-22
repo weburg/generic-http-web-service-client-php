@@ -87,9 +87,9 @@ class HttpWebServiceInvoker
                     }
                 case "create":
                     $values = array();
-                    foreach ($arguments as $object) {
+                    foreach ($arguments as $argument => $object) {
                         foreach ($object as $property => $value) {
-                            $values[$property] = $value;
+                            $values[$argument . '.' . $property] = $value;
                         }
                     }
 
@@ -118,9 +118,9 @@ class HttpWebServiceInvoker
                     }
                 case "createOrReplace":
                     $values = array();
-                    foreach ($arguments as $object) {
+                    foreach ($arguments as $argument => $object) {
                         foreach ($object as $property => $value) {
-                            $values[$property] = $value;
+                            $values[$argument . '.' . $property] = $value;
                         }
                     }
 
@@ -149,9 +149,9 @@ class HttpWebServiceInvoker
                     }
                 case "update":
                     $values = array();
-                    foreach ($arguments as $object) {
+                    foreach ($arguments as $argument => $object) {
                         foreach ($object as $property => $value) {
-                            $values[$property] = $value;
+                            $values[$argument . '.' . $property] = $value;
                         }
                     }
 
