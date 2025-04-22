@@ -1,6 +1,5 @@
 <?php
 require_once "weburg/ghowst/GenericHttpWebServiceClient.php";
-require_once "weburg/ghowst/HttpWebServiceException.php";
 
 use weburg\ghowst\GenericHttpWebServiceClient;
 use weburg\ghowst\HttpWebServiceException;
