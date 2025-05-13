@@ -87,11 +87,9 @@ $truck1->engineId = $engineId1;
 $truck2 = new stdClass();
 $truck2->name = "Ford";
 $truck2->engineId = $engineId2;
-$truckNameCompareResult = $httpWebService->raceTrucks(truck1: $truck1, truck2: $truck2);
+$truckResult = $httpWebService->raceTrucks(truck1: $truck1, truck2: $truck2);
 
-if ($truckNameCompareResult == 0) {
-    throw new RuntimeException("Did not expect both trucks to have the same name.");
-}
+echo "Truck result: " . $truckResult . "\n";
 
 // Induce a not found error and catch it
 try {
