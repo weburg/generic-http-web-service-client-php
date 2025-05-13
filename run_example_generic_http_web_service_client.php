@@ -18,7 +18,7 @@ $httpWebService->createPhotos(photo: $photo);
 
 // Create
 $engine = new stdClass();
-$engine->name = "PHPZendEngine";
+$engine->name = "PHPEngine";
 $engine->cylinders = 44;
 $engine->throttleSetting = 49;
 $engineId1 = $httpWebService->createEngines(engine: $engine);
@@ -26,14 +26,14 @@ $engineId1 = $httpWebService->createEngines(engine: $engine);
 // CreateOrReplace (which will create)
 $engine = new stdClass();
 $engine->id = -1;
-$engine->name = "PHPZendEngineCreatedNotReplaced";
+$engine->name = "PHPEngineCreatedNotReplaced";
 $engine->cylinders = 45;
 $engine->throttleSetting = 50;
 $httpWebService->createOrReplaceEngines(engine: $engine);
 
 // Prepare for CreateOrReplace
 $engine = new stdClass();
-$engine->name = "PHPZendEngine2";
+$engine->name = "PHPEngine2";
 $engine->cylinders = 44;
 $engine->throttleSetting = 49;
 $engineId2 = $httpWebService->createEngines(engine: $engine);
@@ -41,14 +41,14 @@ $engineId2 = $httpWebService->createEngines(engine: $engine);
 // CreateOrReplace (which will replace)
 $engine = new stdClass();
 $engine->id = $engineId2;
-$engine->name = "PHPZendEngine2Replacement";
+$engine->name = "PHPEngine2Replacement";
 $engine->cylinders = 56;
 $engine->throttleSetting = 59;
 $httpWebService->createOrReplaceEngines(engine: $engine);
 
 // Prepare for Update
 $engine = new stdClass();
-$engine->name = "PHPZendEngine3";
+$engine->name = "PHPEngine3";
 $engine->cylinders = 44;
 $engine->throttleSetting = 49;
 $engineId3 = $httpWebService->createEngines(engine: $engine);
@@ -56,7 +56,7 @@ $engineId3 = $httpWebService->createEngines(engine: $engine);
 // Update
 $engine = new stdClass();
 $engine->id = $engineId3;
-$engine->name = "PHPZendEngine3Updated";
+$engine->name = "PHPEngine3Updated";
 $httpWebService->updateEngines(engine: $engine);
 
 // Get
@@ -69,7 +69,7 @@ echo "Engines returned: " . count($engines) . "\n";
 
 // Prepare for Delete
 $engine = new stdClass();
-$engine->name = "PHPZendEngine4ToDelete";
+$engine->name = "PHPEngine4ToDelete";
 $engine->cylinders = 89;
 $engine->throttleSetting = 70;
 $engineId4 = $httpWebService->createEngines(engine: $engine);
