@@ -6,13 +6,13 @@ use weburg\ghowst\HttpWebServiceException;
 
 $httpWebService = new GenericHttpWebServiceClient("http://localhost:8081/generichttpws");
 
-/*** Photo ***/
+/*** Image ***/
 
 // Create
-$photo = new stdClass();
-$photo->caption = "Some PHP K";
-$photo->photoFile = new CURLFile("PHP_Logo.png");
-$httpWebService->createPhotos(photo: $photo);
+$image = new stdClass();
+$image->caption = "Some PHP K";
+$image->imageFile = new CURLFile("PHP_Logo.png");
+$httpWebService->createImages(image: $image);
 
 /*** Engine ***/
 
