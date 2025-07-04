@@ -13,6 +13,16 @@ class GenericHttpWebServiceClientTest extends TestCase {
         $this->testWebService = new GenericHttpWebServiceClient("http://localhost:8081/generichttpws");
     }
 
+    public function testExampleGenericHttpWebServiceClient() {
+        exec("php run_example_generic_http_web_service_client.php", $output, $return);
+
+        foreach ($output as $line) {
+            echo $line . "\n";
+        }
+
+        $this->assertEquals(0, $return);
+    }
+
     public function testCreateEngine() {
         $engine = new \stdClass();
         $engine->name = "PHPTestEngine";

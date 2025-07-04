@@ -13,9 +13,14 @@ class GenericHttpWebServiceClientTest extends TestCase {
         $this->testWebService = new GenericHttpWebServiceClient("http://nohost/noservice");
     }
 
-    public function testCreateTestResource() {
+    public function testServiceException() {
         $this->expectException(HttpWebServiceException::class);
 
-        $this->testWebService->createResource(resource: new \stdClass());
+        $engine = new \stdClass();
+        $engine->name = "PHPTestEngine";
+        $engine->cylinders = 12;
+        $engine->throttleSetting = 50;
+
+        $this->testWebService->createEngines(engine: $engine);
     }
 }
