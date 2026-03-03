@@ -240,10 +240,10 @@ class HttpWebServiceInvoker
                     }
             }
         } catch (HttpWebServiceException $e) {
-            curl_close($ch);
+            unset($ch);
             throw $e;
         } finally {
-            curl_close($ch);
+            unset($ch);
         }
     }
 }

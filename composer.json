@@ -5,5 +5,8 @@
   "scripts": {
     "test": "phpunit",
     "verify": "phpunit --testsuite unit,integration"
+  },
+  "require": {
+    "ext-curl": "*"
   }
 }
