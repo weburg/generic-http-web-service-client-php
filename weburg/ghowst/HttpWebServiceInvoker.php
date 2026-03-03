@@ -5,7 +5,7 @@ require_once "HttpWebServiceException.php";
 
 class HttpWebServiceInvoker
 {
-    private static function getEntityName($name, $verb)
+    private static function getResourceName($name, $verb)
     {
         return strtolower(substr($name, strlen($verb), strlen($name)));
     }
@@ -33,28 +33,28 @@ class HttpWebServiceInvoker
     {
         if (strpos($methodName, "get") === 0) {
             $verb = "get";
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         } else if (strpos($methodName, "createOrReplace") === 0) {
             $verb = "createOrReplace";
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         } else if (strpos($methodName, "create") === 0) {
             $verb = "create";
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         } else if (strpos($methodName, "update") === 0) {
             $verb = "update";
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         } else if (strpos($methodName, "delete") === 0) {
             $verb = "delete";
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         } else {
             $parts = preg_split("/(?=[A-Z])/", lcfirst($methodName));
 
             $verb = strtolower($parts[0]);
-            $entity = self::getEntityName($methodName, $verb);
+            $resource = self::getResourceName($methodName, $verb);
         }
 
-        echo "Verb: $verb\n";
-        echo "Entity: $entity\n";
+        error_log("Verb: $verb");
+        error_log("Resource: $resource");
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -64,7 +64,7 @@ class HttpWebServiceInvoker
         try {
             switch ($verb) {
                 case "get":
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . self::generateQs($arguments));
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . self::generateQs($arguments));
 
                     $result = curl_exec($ch);
 
@@ -93,7 +93,7 @@ class HttpWebServiceInvoker
                         }
                     }
 
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
@@ -124,7 +124,7 @@ class HttpWebServiceInvoker
                         }
                     }
 
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
@@ -155,7 +155,7 @@ class HttpWebServiceInvoker
                         }
                     }
 
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity);
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
@@ -179,7 +179,7 @@ class HttpWebServiceInvoker
                         throw new HttpWebServiceException(0, $error);
                     }
                 case "delete":
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . self::generateQs($arguments));
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . self::generateQs($arguments));
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 
                     $result = curl_exec($ch);
@@ -215,7 +215,7 @@ class HttpWebServiceInvoker
                         }
                     }
 
-                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $entity . '/' . $verb);
+                    curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . '/' . $verb);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $processedArguments);
 
