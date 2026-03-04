@@ -31,8 +31,9 @@ $engineId1 = $httpWebService->createEngines(engine: $engine);
 
 First, ensure the server is running. Refer to other grouped GHoWSt projects to
 get and run the server. Ensure PHP 8 or better is installed. Then, make sure
-cURL is enabled in your php.ini. If on Linux, you may also have to install, for
-example, the php-curl package in addition to php-cli and optionally php-xdebug.
+cURL and OpenSSL are enabled in your php.ini. If on Linux, you may also have to
+install, for example, the php-curl package in addition to php-cli and optionally
+php-xdebug. Finally, make sure the composer dependencies are installed.
 
 If using the CLI, ensure you are in the project directory. Run:
 

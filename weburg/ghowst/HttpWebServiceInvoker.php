@@ -29,6 +29,43 @@ class HttpWebServiceInvoker
         return $headersArray;
     }
 
+    private static function executeAndHandle($ch) {
+        $result = curl_exec($ch);
+
+        if ($result !== false) {
+            $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $headers = self::getHeaders(substr($result, 0, $headerSize));
+            $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            if ($statusCode >= 400 || $statusCode < 200) {
+                throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
+            } else if ($statusCode >= 300 && $statusCode < 400) {
+                throw new HttpWebServiceException($statusCode, $headers["location"]);
+            }
+
+            return json_decode(substr($result, $headerSize));
+        } else {
+            $error = curl_error($ch);
+
+            throw new HttpWebServiceException(0, $error);
+        }
+    }
+
+    private static function nameValuesFromArguments($arguments) {
+        $processedArguments = array();
+        foreach ($arguments as $argument => $value) {
+            if (!is_object($value)) {
+                $processedArguments[$argument] = $value;
+            } else {
+                foreach ($value as $property => $propValue) {
+                    $processedArguments[$argument . '.' . $property] = $propValue;
+                }
+            }
+        }
+
+        return $processedArguments;
+    }
+
     public function invoke($methodName, $arguments, $baseUrl)
     {
         if (strpos($methodName, "get") === 0) {
@@ -66,178 +103,46 @@ class HttpWebServiceInvoker
                 case "get":
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . self::generateQs($arguments));
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return json_decode(substr($result, $headerSize));
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
                 case "create":
-                    $values = array();
-                    foreach ($arguments as $argument => $object) {
-                        foreach ($object as $property => $value) {
-                            $values[$argument . '.' . $property] = $value;
-                        }
-                    }
+                    $values = self::nameValuesFromArguments($arguments);
 
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return json_decode(substr($result, $headerSize));
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
                 case "createOrReplace":
-                    $values = array();
-                    foreach ($arguments as $argument => $object) {
-                        foreach ($object as $property => $value) {
-                            $values[$argument . '.' . $property] = $value;
-                        }
-                    }
+                    $values = self::nameValuesFromArguments($arguments);
 
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return json_decode(substr($result, $headerSize));
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
                 case "update":
-                    $values = array();
-                    foreach ($arguments as $argument => $object) {
-                        foreach ($object as $property => $value) {
-                            $values[$argument . '.' . $property] = $value;
-                        }
-                    }
+                    $values = self::nameValuesFromArguments($arguments);
 
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource);
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return;
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
                 case "delete":
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . self::generateQs($arguments));
                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return;
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
                 default:
                     // POST to a custom verb resource
 
-                    $processedArguments = array();
-                    foreach ($arguments as $argument => $value) {
-                        if (!is_object($value)) {
-                            $processedArguments[$argument] = $value;
-                        } else {
-                            foreach ($value as $property => $propValue) {
-                                $processedArguments[$argument . '.' . $property] = $propValue;
-                            }
-                        }
-                    }
+                    $values = self::nameValuesFromArguments($arguments);
 
                     curl_setopt($ch, CURLOPT_URL, $baseUrl . '/' . $resource . '/' . $verb);
                     curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $processedArguments);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $values);
 
-                    $result = curl_exec($ch);
-
-                    if ($result !== false) {
-                        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                        $headers = self::getHeaders(substr($result, 0, $headerSize));
-                        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                        if ($statusCode >= 400 || $statusCode < 200) {
-                            throw new HttpWebServiceException($statusCode, $headers["x-error-message"]);
-                        } else if ($statusCode >= 300 && $statusCode < 400) {
-                            throw new HttpWebServiceException($statusCode, $headers["location"]);
-                        }
-
-                        return json_decode(substr($result, $headerSize));
-                    } else {
-                        $error = curl_error($ch);
-
-                        throw new HttpWebServiceException(0, $error);
-                    }
+                    return self::executeAndHandle($ch);
             }
         } catch (HttpWebServiceException $e) {
             unset($ch);
