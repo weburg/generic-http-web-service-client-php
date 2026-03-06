@@ -54,7 +54,6 @@ $engine->throttleSetting = 49;
 $engineId3 = $httpWebService->createEngines(engine: $engine);
 
 // Update
-$engine = new stdClass();
 $engine->id = $engineId3;
 $engine->name = "PHPEngine3Updated";
 $httpWebService->updateEngines(engine: $engine);
