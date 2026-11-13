@@ -1,5 +1,7 @@
 # Generic HTTP Web Service Client in PHP (GHoWSt)
 
+![Logo](https://www.weburg.com/ghowst/images/ghowstlogo.png)
+
 ## A client written to talk to the Generic HTTP Web Service Server
 
 ### Design goals
@@ -9,6 +11,10 @@
 - Every call, using a method name convention to map to HTTP methods, gets
   translated to HTTP requests. Responses are parsed from JSON and mapped back to
   local objects.
+
+### Setup
+
+
 
 ### Example code
 
@@ -27,13 +33,17 @@ $engine->throttleSetting = 49;
 $engineId1 = $httpWebService->createEngines(engine: $engine);
 ```
 
+### Setup
+
+Ensure PHP 8 or better is installed. Then, make sure cURL and OpenSSL are
+enabled in your php.ini. If on Linux, you may also have to install, for
+example, the php-curl package in addition to php-cli and optionally php-xdebug.
+Finally, make sure the composer dependencies are installed.
+
 ### Running the example
 
 First, ensure the server is running. Refer to other grouped GHoWSt projects to
-get and run the server. Ensure PHP 8 or better is installed. Then, make sure
-cURL and OpenSSL are enabled in your php.ini. If on Linux, you may also have to
-install, for example, the php-curl package in addition to php-cli and optionally
-php-xdebug. Finally, make sure the composer dependencies are installed.
+get and run the server.
 
 If using the CLI, ensure you are in the project directory. Run:
 
